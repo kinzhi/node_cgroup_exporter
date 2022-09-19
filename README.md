@@ -65,3 +65,24 @@ memory_capacity_in_bytes | 节点总内存 | Node_exporter ｜ node_memory_MemTo
 memory_working_set | 节点在用内存 | 需计算 | /
 memory_usage_in_bytes | 节点在用内存(包含节点进程使用、进程缓存等) | Node_cgroup_exporter(新增) | node_cgroupMem_usage
 memory_total_inactive_file | 节点inactive缓存(当前exporter新增) | Node_exporter | node_memory_Inactive_file_bytes
+
+
+### 告警规则
+
+```
+sum(label_replace(node_cgroupMem_usage,"nodeip","$1","instance","(.*):.*"))by(nodeip)  / (sum(label_replace(node_memory_MemTotal_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip) + sum(label_replace(node_memory_Inactive_file_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip)) > 0.8
+```
+
+## 构建
+
+```
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build main.go
+```
+
+```
+docker build --platform linux/amd64 -t harbor.harbor.cn/etc/ww/node_cgroup_exporter:v1.1 . --no-cache
+```
+
+```
+docker save harbor.harbor.cn/etc/ww/node_cgroup_exporter:v1.1 -o cgroup-exporter.tar
+```
