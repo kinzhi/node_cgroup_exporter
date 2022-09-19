@@ -11,7 +11,7 @@ docker run -it -p 9100:9100 node_cgroup_exporter:latest
 
 ## 部署在 Kubernetes
 ```bash
-kubectl apply -f deploy/node_cgroup_exporter_daemonset.yaml
+kubectl apply -f deploy/*
 ```
 
 ## 背景
