@@ -26,11 +26,10 @@ func (c *cgroupmemCollector) getCgroupUsageMem() (float64, error) {
 
 func parseCgroupMem(r io.Reader) (float64, error) {
 	content, err := ioutil.ReadAll(r)
-	content1 := strings.Replace(string(content), "\n", "", -1)
-	con1, err := strconv.ParseFloat(content1, 64)
+	contentf64, err := strconv.ParseFloat(strings.Replace(string(content), "\n", "", -1), 64)
 	if err != nil {
 		return -1, fmt.Errorf("invalid value in cgroupmemusage: %w", err)
 	}
-	return con1, err
+	return contentf64, err
 
 }
