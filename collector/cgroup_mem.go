@@ -2,6 +2,7 @@ package collector
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -28,6 +29,10 @@ func NewCgroupmemCollector(logger log.Logger) (Collector, error) {
 // Update calls (*cgroupmemCollector).getCgroupUsageMem to get the platform specific
 // memory metrics.
 func (c *cgroupmemCollector) Update(ch chan<- prometheus.Metric) error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
 	// var metricType prometheus.ValueType
 	cgroupUsageMem, err := c.getCgroupUsageMem()
 	if err != nil {
@@ -39,7 +44,7 @@ func (c *cgroupmemCollector) Update(ch chan<- prometheus.Metric) error {
 		prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, cgroupMemSubsystem, "usage"),
 			fmt.Sprintf("Memory information field %s.", cgroupUsageMem),
-			nil, nil,
+			nil, prometheus.Labels{"hostname": hostname},
 		), prometheus.GaugeValue, cgroupUsageMem,
 	)
 	return nil
