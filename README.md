@@ -71,7 +71,12 @@ memory_total_inactive_file | 节点inactive缓存(当前exporter新增) | Node_e
 
 根据 kubelet 驱逐逻辑制定告警规则：
 ```
-sum(label_replace(node_cgroupMem_usage,"nodeip","$1","instance","(.*):.*"))by(nodeip)  / (sum(label_replace(node_memory_MemTotal_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip) + sum(label_replace(node_memory_Inactive_file_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip)) > 0.8
+(sum(label_replace(node_cgroupMem_usage,"nodeip","$1","instance","(.*):.*"))by(nodeip) - sum(label_replace(node_memory_Inactive_file_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip))  / sum(label_replace(node_memory_MemTotal_bytes,"nodeip","$1","instance","(.*):.*"))by(nodeip) > 0.8
+```
+
+旧版:
+```
+(sum(label_replace(node_cgroupMem_usage)by(hostname) - sum(label_replace(node_memory_Inactive_file_bytes,"hostname","$1","instance","(.*)"))by(hostname))  / sum(label_replace(node_memory_MemTotal_bytes,"hostname","$1","instance","(.*)"))by(hostname) > 0.8
 ```
 
 ## 构建
